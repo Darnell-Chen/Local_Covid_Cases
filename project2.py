@@ -13,25 +13,31 @@ WINDOW = 7
 
 # Defines function main
 def main():
+    county = input("What county would you like to plot?: ")
+    state = input("What state is the county in? ")
 
-    returned_list = fReadInputFile(FILE_PATH_INPUT)
+    returned_list = fReadInputFile(FILE_PATH_INPUT, county, state)
+
+    while len(returned_list[0]) <= 1:
+        county = input("County not found, please enter another: ")
+        state = input("Please also input state: ")
+        returned_list = fReadInputFile(FILE_PATH_INPUT, county, state)
+        fWriteOutputFile(returned_list)
+
     fWriteOutputFile(returned_list)
-
     # calls fReadOutputFile, which will go through the argument and copy all the daily cases into a string
     daily_case_list = fReadOutputFile(FILE_PATH_OUTPUT)
     # Calls fCalcMovAvg, which will return a list of 7-day moving average
     moveAvg = fCalcMovAvg(daily_case_list)
     # Uses the moving average list to write a new column in the output file
     fWriteCovidSFFile(FILE_PATH_OUTPUT, moveAvg)
-    plot.fPlotSFCovid(FILE_PATH_OUTPUT, "San Francisco")
+    plot.fPlotSFCovid(FILE_PATH_OUTPUT, county)
 
 
 
 
 # Defines function fReadInputFile which will take the parameter (a file), and loop through it to find daily cases
-def fReadInputFile(pFileName):
-    # places the string 'San Francisco' in a variable, to be searched later
-    string = 'San Francisco'
+def fReadInputFile(pFileName, county, state):
     # opens the input file in read mode using the parameter
     file = open("F:/CovidTracker/Local_Covid_Cases/" + str(pFileName), 'r')
     # Initiates a first_list, which will hold the dates and daily cases
@@ -46,8 +52,13 @@ def fReadInputFile(pFileName):
         string_case = ''
         case_list = []
         date_list = []
+
+        line = line.upper()
+        county = county.upper()
+        state = state.upper()
+
         # Checks if the string San Francisco is in the line
-        if string in line:
+        if county in line and state in line:
             # Loops through every character in the line
             for char in line:
                 # checks if the character is a comma, if it is, then it adds one to the comma count
@@ -75,22 +86,16 @@ def fReadInputFile(pFileName):
     current = ''
     # loops through the values in the first list of the nested list which holds the dates
     for value in first_list[1]:
-        # Checks if the current variable is blank
-        # if the variable is empty, it will assign the current value to the variable
         if current == '':
             current = float(value)
         else:
-            # find the difference in daily case by subtracting the current number from the previous
-            # the previous is poorly named "current"
             daily_case = float(value) - float(current)
-            # checks if the difference is over 2000, if it is, only 2000 is appended to the list of daily cases
-            if daily_case > 2000:
-                daily_case_list.append(str(2000))
-                current = value
-            elif daily_case <= 2000:
+            if daily_case < 0:
+                # Handle negative case difference
+                daily_case_list.append(str(0))
+            else:
                 daily_case_list.append(str(daily_case))
-                current = float(value)
-
+            current = float(value)
 
     # for the list of dates, we will splice it the nested list holding the dates and cases
     # we will slice the list holding the dates as the list of daily cases won't include the first day
@@ -108,7 +113,7 @@ def fReadInputFile(pFileName):
 # and writes it into a csv file
 def fWriteOutputFile(pList):
     # Opens the output file in append mode
-    file = open(FILE_PATH_OUTPUT, 'a')
+    file = open(FILE_PATH_OUTPUT, 'w')
     # loops for the length of pList[0], which is one of the nested lists. Both nested lists are of the same length.
     for x in range(len(pList[0])):
         # writes the date, adds a comma, and the daily cases. Then writes the line break.
