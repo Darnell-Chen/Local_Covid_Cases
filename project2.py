@@ -7,7 +7,7 @@ import CovidSFPlot as plot
 # One has a list of input files
 # One contains the string for the output path
 # One holds a constant that defines the number of days in a week
-FILE_PATH_INPUT = ['us-counties-2020.csv', 'us-counties-2021.csv', 'us-counties-2022.csv']
+FILE_PATH_INPUT = ['us-counties.csv', 'us-counties-2021.csv', 'us-counties-2022.csv']
 FILE_PATH_OUTPUT = 'D:/CS110/covid-SF.csv'
 WINDOW = 7
 
@@ -26,6 +26,9 @@ def main():
     # Uses the moving average list to write a new column in the output file
     fWriteCovidSFFile(FILE_PATH_OUTPUT, moveAvg)
     plot.fPlotSFCovid(FILE_PATH_OUTPUT)
+
+
+
 
 # Defines function fReadInputFile which will take the parameter (a file), and loop through it to find daily cases
 def fReadInputFile(pFileName):
@@ -98,6 +101,9 @@ def fReadInputFile(pFileName):
     # returns the list
     return returned_list
 
+
+
+
 # defines function fWriteOutputFile, which will take the list made from fReadInputFile
 # and writes it into a csv file
 def fWriteOutputFile(pList):
@@ -143,6 +149,9 @@ def fReadOutputFile(pLocation):
     # the daily list is returned
     return daily_list
 
+
+
+
 # Initiates a function that will find the 7-day moving average using the daily case list
 def fCalcMovAvg(pList):
     # Initiates a new list that will hold the moving average
@@ -164,6 +173,9 @@ def fCalcMovAvg(pList):
     # Returns moving Average
     # returns the list of moving average
     return movAvg
+
+
+
 
 #
 def fWriteCovidSFFile(pFile, pList):
