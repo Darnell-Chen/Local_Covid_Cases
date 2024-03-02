@@ -7,25 +7,23 @@ import CovidSFPlot as plot
 # One has a list of input files
 # One contains the string for the output path
 # One holds a constant that defines the number of days in a week
-FILE_PATH_INPUT = ['us-counties.csv', 'us-counties-2021.csv', 'us-counties-2022.csv']
-FILE_PATH_OUTPUT = 'D:/CS110/covid-SF.csv'
+FILE_PATH_INPUT = 'us-counties.csv'
+FILE_PATH_OUTPUT = 'F:/CovidTracker/Local_Covid_Cases/covid-SF.csv'
 WINDOW = 7
 
 # Defines function main
 def main():
-    # loops through the length of the input list
-    for x in range(0, len(FILE_PATH_INPUT)):
-        # Calls function fReadInputFile, which its argument being a value in the list and puts return into a variable
-        # Calls function fWriteOutputFile - using the returned list from fReadInputFile as an argument
-        returned_list = fReadInputFile(FILE_PATH_INPUT[x])
-        fWriteOutputFile(returned_list)
+
+    returned_list = fReadInputFile(FILE_PATH_INPUT)
+    fWriteOutputFile(returned_list)
+
     # calls fReadOutputFile, which will go through the argument and copy all the daily cases into a string
     daily_case_list = fReadOutputFile(FILE_PATH_OUTPUT)
     # Calls fCalcMovAvg, which will return a list of 7-day moving average
     moveAvg = fCalcMovAvg(daily_case_list)
     # Uses the moving average list to write a new column in the output file
     fWriteCovidSFFile(FILE_PATH_OUTPUT, moveAvg)
-    plot.fPlotSFCovid(FILE_PATH_OUTPUT)
+    plot.fPlotSFCovid(FILE_PATH_OUTPUT, "San Francisco")
 
 
 
@@ -35,7 +33,7 @@ def fReadInputFile(pFileName):
     # places the string 'San Francisco' in a variable, to be searched later
     string = 'San Francisco'
     # opens the input file in read mode using the parameter
-    file = open("C:/Users/reald/Desktop/Project2/covid-19-data-master/" + str(pFileName), 'r')
+    file = open("F:/CovidTracker/Local_Covid_Cases/" + str(pFileName), 'r')
     # Initiates a first_list, which will hold the dates and daily cases
     first_list = [[],[]]
     # Initiates a return string, which will hold the list being returned
@@ -69,7 +67,7 @@ def fReadInputFile(pFileName):
     else:
         # just a placeholder
         placeholder = 'placeholder'
-    # Closes the file
+
     file.close()
     # Initiates a list, which will hold the daily cases
     daily_case_list = []
@@ -92,6 +90,8 @@ def fReadInputFile(pFileName):
             elif daily_case <= 2000:
                 daily_case_list.append(str(daily_case))
                 current = float(value)
+
+
     # for the list of dates, we will splice it the nested list holding the dates and cases
     # we will slice the list holding the dates as the list of daily cases won't include the first day
     daily_date_list = first_list[0][1:]
